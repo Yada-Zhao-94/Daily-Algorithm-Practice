@@ -17,4 +17,5 @@
 [21. 合并两个有序链表](https://leetcode-cn.com/problems/merge-two-sorted-lists/)
 简单
 ## 02-07-2021：64匹马，8个赛道，找出前4匹马最少需要比几次
-[解答：智力题，没什么意思]（https://blog.csdn.net/star_fighting/article/details/104706155/）
+智力题，没什么意思  
+https://blog.csdn.net/star_fighting/article/details/104706155/
