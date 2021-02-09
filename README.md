@@ -15,7 +15,7 @@
 ## 02-07-2021: 10亿个数中如何高效地找到最大的一个数以及最大的第K个数  
 基本同上。假设一个数为几十个byte大小，10亿个数为几十GB级别，不能全部放入内存。  
 **1）最基础解法：K路归并**
-1. 一次处理内存放得下的数据量，得到最大的K个数
+1. 一次处理内存放得下的数据量，得到最大的K个数（PriorityQueue或qucik selection法）
 2. 对所有最大的K个数的数组进行K路归并
 
 **2）询问数据是否有取值或分布范围，则可以使用桶排序/计数排序**  
@@ -76,8 +76,93 @@ public class Solution {
 
 ## 02-08-2021：445. 两数相加 II
 [leetcode 445](https://leetcode-cn.com/problems/add-two-numbers-ii/)  
-直接将两链表转化为数字再相加，再将和从头开始拼接为链表即可
+直接将两链表转化为数字再相加会导致数字溢出❌  
+还是采用两数相加I的末位开始处理，最后反转链表。
+```Java
+class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        Deque<Integer> stack1 = new LinkedList<>();
+        Deque<Integer> stack2 = new LinkedList<>();
+        while(l1 != null) {
+            stack1.push(l1.val);
+            l1 = l1.next;
+        }
+        while(l2 != null) {
+            stack2.push(l2.val);
+            l2 = l2.next;
+        }
+        int add1 = 0;
+        ListNode dummy = new ListNode(0);
+        ListNode cur = dummy;
+        while(!stack1.isEmpty() || !stack2.isEmpty()) {
+            int num1 = stack1.isEmpty() ? 0 : stack1.pop();
+            int num2 = stack2.isEmpty() ? 0 : stack2.pop();
+            int res = num1 + num2 + add1;
+            ListNode node = new ListNode(res % 10);
+            cur.next = node;
+            cur = node;
+            add1 = res / 10;
+        }
+        if (add1 == 1) {
+            cur.next = new ListNode(1);
+        }
+        ListNode newHead = reverse(dummy.next);
+        return newHead;
+    }
+
+    private ListNode reverse(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode newHead = reverse(head.next);
+        head.next.next = head;
+        head.next = null;
+        return newHead;
+    }
+}
+```
 
 ## 02-08-2021：二叉树的锯齿形层次遍历
 [leetcode 103](https://leetcode-cn.com/problems/binary-tree-zigzag-level-order-traversal/)  
 使用Deque,在BFS过程中两头倒腾即可
+```Java
+class Solution {
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        List<List<Integer>> res = new ArrayList<>();
+        if (root == null) {
+            return res;
+        }
+        Deque<TreeNode> deque = new LinkedList<>();
+        deque.offerFirst(root);
+        int count = 1;
+        while(!deque.isEmpty()) {
+            int size = deque.size();
+            List<Integer> list = new ArrayList<>();
+            for (int i = 0; i < size; i++) {               
+                if (count % 2 != 0) {
+                    TreeNode cur = deque.pollFirst();
+                    list.add(cur.val);
+                    if (cur.left != null) {
+                        deque.offerLast(cur.left);
+                    }
+                    if (cur.right != null) {
+                        deque.offerLast(cur.right);
+                    }
+                } else {
+                    TreeNode cur = deque.pollLast();
+                    list.add(cur.val);
+                    if (cur.right != null) {
+                        deque.offerFirst(cur.right);
+                    }
+                    if (cur.left != null) {
+                        deque.offerFirst(cur.left);
+                    }
+                }
+            }
+            count++;
+            res.add(list);
+        }
+        return res;
+    }
+}
+```
