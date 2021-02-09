@@ -170,5 +170,72 @@ class Solution {
 }
 ```
 ## 02-09-2021: K 个一组翻转链表 (Leetcode 25)
+由于只能使用常数的额外空间，不能使用recursion. 所以只能用类似iterative反转链表的方法。  
+prev为已处理好的前半部分，当前k个Node需要反转，next为后半段。注意while循环中，需要最后将cur设置为已被反转k个Node这段的Tail，从而进入下一循环
+```Java
+class Solution {
+    public ListNode reverseKGroup(ListNode head, int k) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode cur = dummy;
+        while(true) {
+            ListNode prev = cur;
+            for(int i = 0; i < k; i++) {
+                cur = cur.next;
+                if (cur == null) {
+                    return dummy.next;
+                }
+            }
+            ListNode next = cur.next;
+            ListNode oldHead = prev.next;
+            cur.next = null;
+            ListNode[] res = reverse(oldHead, cur);
+            prev.next = res[0];
+            res[1].next = next;
+            cur = res[1];
+        }
+    }
 
+    private ListNode[] reverse(ListNode head, ListNode tail) {
+        ListNode[] res = new ListNode[2];
+        res[1] = head;
+        ListNode prev = null;
+        while(head != null) {
+            ListNode next = head.next;
+            head.next = prev;
+            prev = head;
+            head = next;
+        }
+        res[0] = prev;
+        return res;
+    }
+}
+```
 ## 02-10-2021: 搜索旋转排序数组 (Leetcode 33)
+观察：经过旋转后的数组，任意取一个区间，左半段右半段中至少有一个是递增的。再根据target是否在这半段取值内，即可实现搜索区间减半
+```Java
+class Solution {
+    public int search(int[] nums, int target) {
+        int lo = 0, hi = nums.length - 1;
+        while(lo <= hi) {
+            int mid = lo + (hi - lo) / 2;
+            if (nums[mid] == target) {
+                return mid;
+            } else if (nums[mid] >= nums[lo]) {
+                if (target >= nums[lo] && target <= nums[mid]) {
+                    hi = mid - 1;
+                } else {
+                    lo = mid + 1;
+                }
+            } else {
+                if (target >= nums[mid] && target <= nums[hi]) {
+                    lo = mid + 1;
+                } else {
+                    hi = mid - 1;
+                }
+            }
+        }
+        return -1;
+    }
+}
+```
