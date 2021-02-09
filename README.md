@@ -189,14 +189,14 @@ class Solution {
             ListNode next = cur.next;
             ListNode oldHead = prev.next;
             cur.next = null;
-            ListNode[] res = reverse(oldHead, cur);
+            ListNode[] res = reverse(oldHead);
             prev.next = res[0];
             res[1].next = next;
             cur = res[1];
         }
     }
 
-    private ListNode[] reverse(ListNode head, ListNode tail) {
+    private ListNode[] reverse(ListNode head) {
         ListNode[] res = new ListNode[2];
         res[1] = head;
         ListNode prev = null;
