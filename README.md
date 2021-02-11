@@ -8,6 +8,7 @@
 [02-08-2021: 二叉树的锯齿形层次遍历 (Leetcode)](#02-08-2021二叉树的锯齿形层次遍历)  
 [02-09-2021: K个一组翻转链表 (Leetcode 25)](#02-09-2021-k-个一组翻转链表-leetcode-25)  
 [02-10-2021: 搜索旋转排序数组 (Leetcode 33)](#02-10-2021-搜索旋转排序数组-leetcode-33)  
+[02-11-2021: 判断有环链表的环长度](#02-11-2021-判断有环链表的环长度)  
 
 ## 02-06-2021: 给定 100G 的 URL 磁盘数据，使用最多 1G 内存，统计出现频率最高的 Top K 个 URL
 1. 新建约100个文件，利用hash(URL) % 100的值，将每条URL映射到对应文件下，保证同一URL必然全部映射到同一文件下。
@@ -236,6 +237,35 @@ class Solution {
             }
         }
         return -1;
+    }
+}
+```
+## 02-11-2021: 判断有环链表的环长度
+判断有环：快慢指针，假设slow指针走了n步的话。可推导出当 n = k * (环长度) 时，两指针都会相遇一次。  
+第一次相遇后，第二个指针再走一圈即可得环长度
+```Java
+public class Solution {
+    public boolean hasCycle(ListNode head) {
+        ListNode slow = head, fast = head;
+        while(fast != null && fast.next != null) {
+            fast = fast.next.next;
+            slow = slow.next;
+            if (fast == slow) {
+                int cycleLength = getLength(fast, slow);
+                System.out.println(cycleLength);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private int getLength(ListNode fast, ListNode slow) {
+        int count = 0;
+        do {
+            fast = fast.next;
+            count++;
+        } while(fast != slow);
+        return count;
     }
 }
 ```
