@@ -12,6 +12,10 @@
 [02-12-2021: 寻找旋转排序数组中的最小值(数组有重复/无重复元素)]()  
 [02-13-2021: 最大子序和(Leetcode 53)]()  
 [02-14-2021: 给定一个 foo 函数，60%的概率返回0，40%的概率返回1，如何利用 foo 函数实现一个 50% 返回 0 的函数？(以及利用均匀硬币产生不等概率)]()  
+[02-15-2021: 搜索旋转排序数组 II (Leetcode 81)]()  
+[02-16-2021: 最长连续子序列(Leetcode 128)]()  
+[02-17-2021: ]()  
+[02-18-2021: ]()
 
 ## 02-06-2021: 给定 100G 的 URL 磁盘数据，使用最多 1G 内存，统计出现频率最高的 Top K 个 URL
 1. 新建约100个文件，利用hash(URL) % 100的值，将每条URL映射到对应文件下，保证同一URL必然全部映射到同一文件下。
@@ -384,6 +388,67 @@ public int coin() {
   } else {
     return 1;
   }
+}
+```
+
+## 02-15-2021: 搜索旋转排序数组 II (Leetcode 81)
+根据nums[mid]与nums[lo]的大小分三种情况讨论：nums[mid] != nums[lo]时候必然可以确认其中半段为递增序列；  
+**nums[mid] == nums[lo]时，我们无法得知应该往左半段还是右半段搜索，从而无法舍弃掉任何一半段，只能lo++**
+```Java
+class Solution {
+    public boolean search(int[] nums, int target) {
+        int lo = 0, hi = nums.length - 1;
+        while(lo + 1 < hi) {
+            int mid = lo + (hi - lo) / 2;
+            if (nums[mid] == target) {
+                return true;
+            } else if (nums[mid] > nums[lo]) {
+                if (target >= nums[lo] && target < nums[mid]) {
+                    hi = mid - 1;
+                } else {
+                    lo = mid + 1;
+                }
+            } else if (nums[mid] < nums[lo]) {
+                if (target > nums[mid] && target <= nums[hi]) {
+                    lo = mid + 1;
+                } else {
+                    hi = mid - 1;
+                }
+            } else {
+                // 无法确定某半段是递增序列的时候
+                lo++;
+            }
+        }
+        return nums[lo] == target || nums[hi] == target;
+    }
+}
+```
+
+## 02-16-2021: 最长连续子序列(Leetcode 128)
+若只想对含x的一个连续序列只统计一次长度，可利用HashSet是否包含x-1
+```Java
+class Solution {
+    public int longestConsecutive(int[] nums) {
+        HashSet<Integer> set = new HashSet<>();
+        for(int n : nums) {
+            set.add(n);
+        }
+        int max = 0;
+        for(int n : set) {
+            if (set.contains(n - 1)) {
+                continue;
+            } else {
+                int start = n;
+                int count = 0;
+                while(set.contains(start)) {
+                    count++;
+                    start++;
+                }
+                max = Math.max(max, count);
+            }
+        }
+        return max;
+    }
 }
 ```
 
