@@ -9,6 +9,7 @@
 [02-09-2021: K个一组翻转链表 (Leetcode 25)](#02-09-2021-k-个一组翻转链表-leetcode-25)  
 [02-10-2021: 搜索旋转排序数组 (Leetcode 33)](#02-10-2021-搜索旋转排序数组-leetcode-33)  
 [02-11-2021: 判断有环链表的环长度](#02-11-2021-判断有环链表的环长度)  
+[02-12-2021: 寻找旋转排序数组中的最小值(数组有重复/无重复元素)]()  
 
 ## 02-06-2021: 给定 100G 的 URL 磁盘数据，使用最多 1G 内存，统计出现频率最高的 Top K 个 URL
 1. 新建约100个文件，利用hash(URL) % 100的值，将每条URL映射到对应文件下，保证同一URL必然全部映射到同一文件下。
@@ -266,6 +267,54 @@ public class Solution {
             count++;
         } while(fast != slow);
         return count;
+    }
+}
+```
+## 02-12-2021: 寻找旋转排序数组中的最小值(数组有重复/无重复元素) Leetcode 153, 154
+数组无重复元素：153   
+递归法，分别求左右两半的最小值。值得注意的是**如何证明复杂度为O(logN)：** T(N) = T(N/2) + O(1) -> 是因为每次对半分区间后，至少有一半是排序数组。
+```Java
+class Solution {
+    public int findMin(int[] nums) {
+        return findMin(nums, 0, nums.length - 1);
+    }
+
+    private int findMin(int[] nums, int lo, int hi) {
+        // first base case: only 2 or 1 elements
+        if (lo + 1 >= hi) {
+            return Math.min(nums[lo], nums[hi]);
+        }
+        // second base case: one half must be sorted
+        if (nums[lo] < nums[hi]) {
+            return nums[lo];
+        }
+        int mid = lo + (hi - lo) / 2;
+        return Math.min(findMin(nums, lo, mid), findMin(nums, mid + 1, hi));
+    }
+}
+```
+数组有重复元素：154    
+与153代码一样，但我们要注意当nums[lo] == nums[hi]时，不能推断出lo ~ hi是排序的。例子：33413  
+所以时间复杂度为O(N)
+```Java
+class Solution {
+    public int findMin(int[] nums) {
+        return findMin(nums, 0, nums.length - 1);
+    }
+
+    private int findMin(int[] nums, int lo, int hi) {
+        // first base case: only 2 or 1 elements
+        if (lo + 1 >= hi) {
+            return Math.min(nums[lo], nums[hi]);
+        }
+        // second base case: if we can find a half is sorted
+        // if (nums[lo] == nums[hi]), we can't conclude that [lo ~ hi] is sorted
+        // 33313
+        if (nums[lo] < nums[hi]) {
+            return nums[lo];
+        }
+        int mid = lo + (hi - lo) / 2;
+        return Math.min(findMin(nums, lo, mid), findMin(nums, mid + 1, hi));
     }
 }
 ```
