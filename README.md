@@ -374,8 +374,8 @@ public int coin() {
 ```Java
 private int generateNum() {
   while(true) {
-    int a = foo()*2^3 + foo()*2^2 + foo()*2^1 + foo();
-    if (a >=1 && a <= 10) {
+    int a = foo() * 2^3 + foo() * 2^2 + foo() * 2^1 + foo();
+    if (a >= 1 && a <= 10) {
       return a;
     }
   }    
