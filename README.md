@@ -18,6 +18,7 @@
 [02-18-2021: 用 Rand7() 实现 Rand10() (Leetcode 470)](#02-18-2021-用-rand7-实现-rand10-leetcode-470)  
 [02-19-2021: AVL 树和红黑树有什么区别？](#02-19-2021-avl-树和红黑树有什么区别)  
 [02-20-2021: 10亿条数据包括 id，上线时间，下线时间，请绘制每一秒在线人数的曲线图](#02-20-2021-10亿条数据包括-id上线时间下线时间请绘制每一秒在线人数的曲线图)  
+[02-21-2021: 路径总和 (Leetcode 112)](#02-21-2021-路径总和leetcode-112)  
 
 ## 02-06-2021: 给定 100G 的 URL 磁盘数据，使用最多 1G 内存，统计出现频率最高的 Top K 个 URL
 1. 新建约100个文件，利用hash(URL) % 100的值，将每条URL映射到对应文件下，保证同一URL必然全部映射到同一文件下。
@@ -498,3 +499,23 @@ AVL树是高度平衡的二叉树，平衡条件必须满足（所有节点的�
 定义另外一个长度为86400的整数数组online_num[86400]，每个整数对应这一秒的在线人数。  
 假设一天开始时论坛在线人数为0，则第1秒的人数online_num[0]=delta[0]。第n+1秒的人数online_num[n]=online_num[n-1]+delta[n]。  
 这样我们就获得了一天中任意时间的在线人数。
+
+## 02-21-2021: 路径总和 (Leetcode 112)
+根节点到叶子路径类型的DFS：往下传递时带上当前的值可以解决所有问题。本题简单的带上一个"根到当前节点路径之和"就可解决  
+```Java
+class Solution {
+    public boolean hasPathSum(TreeNode root, int targetSum) {
+        return dfs(root, 0, targetSum);
+    }
+
+    private boolean dfs(TreeNode root, int curSum, int targetSum) {
+        if (root == null) {
+            return false;
+        }
+        if (root.left == null && root.right == null) {
+            return curSum + root.val == targetSum;
+        }
+        return dfs(root.left, curSum + root.val, targetSum) || dfs(root.right, curSum + root.val, targetSum);
+    }
+}
+```
