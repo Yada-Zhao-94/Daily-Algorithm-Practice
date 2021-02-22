@@ -19,6 +19,7 @@
 [02-19-2021: AVL 树和红黑树有什么区别？](#02-19-2021-avl-树和红黑树有什么区别)  
 [02-20-2021: 10亿条数据包括 id，上线时间，下线时间，请绘制每一秒在线人数的曲线图](#02-20-2021-10亿条数据包括-id上线时间下线时间请绘制每一秒在线人数的曲线图)  
 [02-21-2021: 路径总和 (Leetcode 112)](#02-21-2021-路径总和-leetcode-112)  
+[02-22-2021: 数组中的第 K 个最大元素 (Leetcode 215)]()  
 
 ## 02-06-2021: 给定 100G 的 URL 磁盘数据，使用最多 1G 内存，统计出现频率最高的 Top K 个 URL
 1. 新建约100个文件，利用hash(URL) % 100的值，将每条URL映射到对应文件下，保证同一URL必然全部映射到同一文件下。
@@ -516,6 +517,65 @@ class Solution {
             return curSum + root.val == targetSum;
         }
         return dfs(root.left, curSum + root.val, targetSum) || dfs(root.right, curSum + root.val, targetSum);
+    }
+}
+```
+
+## 02-22-2021: 数组中的第 K 个最大元素 (Leetcode 215)
+方法一：使用最小堆，遍历数组时维持当前最大的K个元素。O(nlogk)  
+若考虑Heapify -> O(k) + O((n-k)*logk)
+```Java
+class Solution {
+    public int findKthLargest(int[] nums, int k) {
+        PriorityQueue<Integer> heap = new PriorityQueue<>();
+        for(int i = 0; i < nums.length; i++) {
+            heap.offer(nums[i]);
+            if (i >= k) {
+                heap.poll();
+            }
+        }
+        return heap.peek();
+    }
+}
+```
+方法二：quick selection. average case: O(N), worse case: O(N^2)  
+据说当partition开始前交换第一个元素与后面随机一个元素，可以证明时间复杂度的期望是O(N)
+```Java
+class Solution {
+    public int findKthLargest(int[] nums, int k) {
+        return find(nums, k, 0, nums.length - 1);    
+    }
+
+    private int find(int[] nums, int k, int lo, int hi) {
+        if (lo == hi) {
+            return nums[lo];
+        }
+        int i = lo + 1, j = hi;
+        while(i <= j) {
+            if (nums[i] <= nums[lo]) {
+                i++;
+            } else if (nums[j] >= nums[lo]) {
+                j--;
+            } else {
+                swap(nums, i, j);
+                i++;
+                j--;
+            }
+        }
+        swap(nums, lo, j);
+        if(hi - j + 1 == k) {
+            return nums[j];
+        } else if (hi - j + 1 > k) {
+            return find(nums, k, j + 1, hi);
+        } else {
+            return find(nums, k - hi + j - 1, lo, j - 1);
+        }
+    }
+
+    private void swap(int[] nums, int lo, int hi) {
+        int temp = nums[lo];
+        nums[lo] = nums[hi];
+        nums[hi] = temp;
     }
 }
 ```
