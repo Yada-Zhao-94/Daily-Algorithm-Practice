@@ -20,6 +20,7 @@
 [02-20-2021: 10亿条数据包括 id，上线时间，下线时间，请绘制每一秒在线人数的曲线图](#02-20-2021-10亿条数据包括-id上线时间下线时间请绘制每一秒在线人数的曲线图)  
 [02-21-2021: 路径总和 (Leetcode 112)](#02-21-2021-路径总和-leetcode-112)  
 [02-22-2021: 数组中的第 K 个最大元素 (Leetcode 215)](#02-22-2021-数组中的第-k-个最大元素-leetcode-215)  
+[02-23-2021: 删除排序链表中的重复元素(Leetcode 83)](#02-23-2021-删除排序链表中的重复元素-leetcode-83)    
 
 ## 02-06-2021: 给定 100G 的 URL 磁盘数据，使用最多 1G 内存，统计出现频率最高的 Top K 个 URL
 1. 新建约100个文件，利用hash(URL) % 100的值，将每条URL映射到对应文件下，保证同一URL必然全部映射到同一文件下。
@@ -576,6 +577,33 @@ class Solution {
         int temp = nums[lo];
         nums[lo] = nums[hi];
         nums[hi] = temp;
+    }
+}
+```
+
+## 02-23-2021: 删除排序链表中的重复元素(Leetcode 83)
+由于是排序链表，使用一个prev值帮助判断。  
+注意**最后一个点后需要将next设为null** 否则原链表中节点后续可能还会有几个重复节点
+```Java
+class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode newHead = head;
+        ListNode cur = head;
+        head = head.next;
+        int prev = newHead.val;
+        while(head != null) {
+            if (head.val != prev) {
+                cur.next = head;
+                cur = cur.next;
+                prev = head.val;
+            }
+            head = head.next;
+        }
+        cur.next = null;
+        return newHead;
     }
 }
 ```
