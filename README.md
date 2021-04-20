@@ -3,7 +3,7 @@
 [02-07-2021: 10亿个数中如何高效地找到最大的一个数以及最大的第K个数](#02-07-2021-10亿个数中如何高效地找到最大的一个数以及最大的第k个数)  
 [02-07-2021: 合并两个有序链表](#02-07-2021合并两个有序链表-leetcode)  
 [02-07-2021: 64匹马，8个赛道，找出前4匹马最少需要比几次](#02-07-202164匹马8个赛道找出前4匹马最少需要比几次)  
-[02-07-2021: 实现快速排序](#02-07-2021-实现快速排序)  
+[02-07-2021: 实现快速排序(递归和非递归)](#02-07-2021-实现快速排序)  
 [02-08-2021: 两数相加 II (Leetcode 445)](#02-08-2021445-两数相加-ii)  
 [02-08-2021: 二叉树的锯齿形层次遍历 (Leetcode)](#02-08-2021二叉树的锯齿形层次遍历)  
 [02-09-2021: K个一组翻转链表 (Leetcode 25)](#02-09-2021-k-个一组翻转链表-leetcode-25)  
@@ -89,7 +89,30 @@ public class Solution {
   }
 }
 ```
-
+非递归：完全就是利用stack模拟递归
+```Java
+    public int[] sortArray(int[] nums) {
+        if (nums.length <= 1) {
+            return nums;
+        }    
+        Deque<Integer> stack = new LinkedList<>();
+        stack.push(nums.length - 1);
+        stack.push(0);
+        while(!stack.isEmpty()) {
+            int left = stack.pop();
+            int right = stack.pop();
+            if (left >= right) {
+                continue;
+            }
+            int pivot = partition(left, right, nums);
+            stack.push(right);
+            stack.push(pivot + 1);
+            stack.push(pivot - 1);
+            stack.push(left);
+        }
+        return nums;
+    }
+```
 ## 02-08-2021：445. 两数相加 II
 [leetcode 445](https://leetcode-cn.com/problems/add-two-numbers-ii/)  
 直接将两链表转化为数字再相加会导致数字溢出❌  
