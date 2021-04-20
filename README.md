@@ -21,6 +21,7 @@
 [02-21-2021: 路径总和 (Leetcode 112)](#02-21-2021-路径总和-leetcode-112)  
 [02-22-2021: 数组中的第 K 个最大元素 (Leetcode 215)](#02-22-2021-数组中的第-k-个最大元素-leetcode-215)  
 [02-23-2021: 删除排序链表中的重复元素(Leetcode 83)](#02-23-2021-删除排序链表中的重复元素leetcode-83)    
+[LRU cache]()
 
 ## 02-06-2021: 给定 100G 的 URL 磁盘数据，使用最多 1G 内存，统计出现频率最高的 Top K 个 URL
 1. 新建约100个文件，利用hash(URL) % 100的值，将每条URL映射到对应文件下，保证同一URL必然全部映射到同一文件下。
@@ -627,6 +628,80 @@ class Solution {
         }
         cur.next = null;
         return newHead;
+    }
+}
+```
+
+## LRU cache 
+使用双向链表+HashMap的数据结构，注意每个操作同时保持链表和HashMap的更新
+```Java
+class LRUCache {
+    class Node {
+        int key;
+        int val;
+        Node prev;
+        Node next;
+
+        public Node(int k, int v) {
+            key = k;
+            val = v;
+        }
+    }
+
+    int cap;
+    Node dummy_head = new Node(0, 0);
+    Node dummy_tail = new Node(0, 0);
+    HashMap<Integer, Node> map = new HashMap<>();
+
+    public LRUCache(int capacity) {
+        this.cap = capacity;
+        dummy_head.next = dummy_tail;
+        dummy_tail.prev = dummy_head;
+    }
+    
+    public int get(int key) {
+        if (!map.containsKey(key)) {
+            return -1;
+        } else {
+            Node node = map.get(key);
+            deleteNode(node);
+            addToHead(node);
+            return node.val;
+        }
+    }
+    
+    public void put(int key, int value) {
+        if (map.containsKey(key)) {
+            Node del = map.get(key);
+            del.val = value;
+            deleteNode(del);
+            addToHead(del);
+        } else {
+            //这一段是由是否达到capacity两种情况 将相同代码提取出来合并。
+            if (map.size() == cap) { 
+                Node oldTail = dummy_tail.prev;
+                map.remove(oldTail.key);
+                deleteNode(oldTail);
+            }
+            Node newNode = new Node(key, value);
+            map.put(key, newNode);
+            addToHead(newNode);
+        }
+    }
+
+    private void deleteNode(Node node) {
+        Node prev = node.prev;
+        Node next = node.next;
+        prev.next = next;
+        next.prev = prev;
+    }
+
+    private void addToHead(Node node) {
+        Node prevHead = dummy_head.next;
+        dummy_head.next = node;
+        node.prev = dummy_head;
+        node.next = prevHead;
+        prevHead.prev = node;
     }
 }
 ```
