@@ -21,7 +21,8 @@
 [02-21-2021: 路径总和 (Leetcode 112)](#02-21-2021-路径总和-leetcode-112)  
 [02-22-2021: 数组中的第 K 个最大元素 (Leetcode 215)](#02-22-2021-数组中的第-k-个最大元素-leetcode-215)  
 [02-23-2021: 删除排序链表中的重复元素(Leetcode 83)](#02-23-2021-删除排序链表中的重复元素leetcode-83)    
-[LRU cache](#lru-cache)
+[LRU cache](#lru-cache)  
+[多数元素 Leetcode 169](#多数元素)
 
 ## 02-06-2021: 给定 100G 的 URL 磁盘数据，使用最多 1G 内存，统计出现频率最高的 Top K 个 URL
 1. 新建约100个文件，利用hash(URL) % 100的值，将每条URL映射到对应文件下，保证同一URL必然全部映射到同一文件下。
@@ -702,6 +703,30 @@ class LRUCache {
         node.prev = dummy_head;
         node.next = prevHead;
         prevHead.prev = node;
+    }
+}
+```
+## 多数元素
+O(1)空间，O(N)时间 摩尔投票法：  
+思路：多数元素跟其他元素"单挑"完，至少也能剩一个
+```Java
+class Solution {
+    public int majorityElement(int[] nums) {
+        int major = nums[0];
+        int count = 1;
+        for(int i = 1; i < nums.length; i++) {
+            if (count == 0) {
+                major = nums[i];
+                count = 1;
+                continue;
+            }
+            if (nums[i] == major) {
+                count++;
+            } else {
+                count--;
+            }
+        }
+        return major;
     }
 }
 ```
